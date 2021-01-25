@@ -8,9 +8,9 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
 
     private let trackLabels: (Value) -> TrackLabel
     private let thumbLabels: (Value) -> ThumbLabel
+    private let accessibilityLabels: (Value) -> Text
 
-    typealias ValueProgress = (Value, [Value], CGFloat) -> CGFloat
-    private let valueProgress: ValueProgress
+    private let valueIndices: (Value, [Value]) -> (Int, Int)
 
     @State private var dragProgress: CGFloat = 0
 
@@ -24,12 +24,14 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
                  values: [Value],
                  trackLabels: @escaping (Value) -> TrackLabel,
                  thumbLabels: @escaping (Value) -> ThumbLabel,
-                 valueProgress: @escaping ValueProgress) {
+                 accessibilityLabels: @escaping (Value) -> Text,
+                 valueIndices: @escaping (Value, [Value]) -> (Int, Int)) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
-        self.valueProgress = valueProgress
+        self.accessibilityLabels = accessibilityLabels
+        self.valueIndices = valueIndices
     }
 
     public var body: some View {
@@ -56,6 +58,27 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
         .onChange(of: dragProgress, perform: { progress in
             if isDragging {
                 self.selected = self.values.element(forProgress: progress)
+            }
+        })
+        .accessibilityElement(children: .ignore)
+        .accessibility(value: self.accessibilityLabels(selected))
+        .accessibility(hint: self.values.map(self.accessibilityLabels)
+                        .reduce(Text(""), { $0 + Text(", ") + $1 }))
+        .accessibilityAdjustableAction({ direction in
+            let (left, right) = self.valueIndices(selected, values)
+            switch direction {
+            case .increment:
+                let next = left == right ? right + 1 : right
+                if self.values.count > next {
+                    self.selected = self.values[next]
+                }
+            case .decrement:
+                let prev = left == right ? left - 1 : left
+                if prev >= 0 {
+                    self.selected = self.values[prev]
+                }
+            @unknown default:
+                break
             }
         })
     }
@@ -90,8 +113,11 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
             .animation(.spring(), value: isDragging)
             .onChange(of: selected, perform: { value in
                 if !isDragging {
+                    let (left, right) = self.valueIndices(value, values)
+                    let start = values.progress(for: left, in: proxy.size.width)
+                    let end = values.progress(for: right, in: proxy.size.width)
                     withAnimation(.spring()) {
-                        self.dragProgress = self.valueProgress(value, values, proxy.size.width)
+                        self.dragProgress = (start + end) / 2
                     }
                 }
             })

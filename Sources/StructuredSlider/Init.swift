@@ -4,15 +4,18 @@ extension StructuredSlider {
     public init(selected: Binding<Value>,
                 values: [Value],
                 trackLabels: @escaping (Value) -> TrackLabel,
-                thumbLabels: @escaping (Value) -> ThumbLabel) {
+                thumbLabels: @escaping (Value) -> ThumbLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: trackLabels,
-                  thumbLabels: thumbLabels, valueProgress: { current, values, width in
+                  thumbLabels: thumbLabels,
+                  accessibilityLabels: accessibilityLabels,
+                  valueIndices: { current, values in
                     if let index = values.firstIndex(of: current) {
-                        return values.progress(for: index, in: width)
+                        return (index, index)
                     } else {
-                        return 0
+                        return (0, 0)
                     }
                   })
     }
@@ -22,31 +25,57 @@ extension StructuredSlider where Value: Comparable {
     public init(selected: Binding<Value>,
                 values: [Value],
                 trackLabels: @escaping (Value) -> TrackLabel,
-                thumbLabels: @escaping (Value) -> ThumbLabel) {
+                thumbLabels: @escaping (Value) -> ThumbLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: trackLabels,
                   thumbLabels: thumbLabels,
-                  valueProgress: { value, values, width in
+                  accessibilityLabels: accessibilityLabels,
+                  valueIndices: { value, values in
                     if let index = values.firstIndex(of: value) {
-                        return values.progress(for: index, in: width)
+                        return (index, index)
                     } else {
                         let prev = values.lastIndex(where: { $0 < value })
                         let next = values.firstIndex(where: { $0 > value })
                         if let prev = prev, let next = next {
-                            let start = values.progress(for: prev, in: width)
-                            let end = values.progress(for: next, in: width)
-                            return (start + end) / 2
+                            return (prev, next)
                         } else if prev == nil {
-                            return values.progress(for: 0, in: width)
+                            return (0, 0)
                         } else {
-                            return values.progress(for: values.endIndex - 1,
-                                                   in: width)
+                            return (values.endIndex - 1, values.endIndex - 1)
                         }
                     }
                   })
     }
 }
+
+extension StructuredSlider where ThumbLabel == Text {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                trackLabels: @escaping (Value) -> TrackLabel,
+                thumbLabels: @escaping (Value) -> ThumbLabel) {
+        self.init(selected: selected,
+                  values: values,
+                  trackLabels: trackLabels,
+                  thumbLabels: thumbLabels,
+                  accessibilityLabels: thumbLabels)
+    }
+}
+
+extension StructuredSlider where ThumbLabel == Text, Value: Comparable {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                trackLabels: @escaping (Value) -> TrackLabel,
+                thumbLabels: @escaping (Value) -> ThumbLabel) {
+        self.init(selected: selected,
+                  values: values,
+                  trackLabels: trackLabels,
+                  thumbLabels: thumbLabels,
+                  accessibilityLabels: thumbLabels)
+    }
+}
+
 
 extension StructuredSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
     public init(selected: Binding<Value>,
@@ -71,21 +100,25 @@ extension StructuredSlider where Value: CustomStringConvertible, Value: Comparab
 extension StructuredSlider where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
     public init(selected: Binding<Value>,
                 values: [Value],
-                label: @escaping (Value) -> TrackLabel) {
+                label: @escaping (Value) -> TrackLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,
-                  thumbLabels: label)
+                  thumbLabels: label,
+                  accessibilityLabels: accessibilityLabels)
     }
 }
 
 extension StructuredSlider where Value: CustomStringConvertible, Value: Comparable, TrackLabel == ThumbLabel {
     public init(selected: Binding<Value>,
                 values: [Value],
-                label: @escaping (Value) -> TrackLabel) {
+                label: @escaping (Value) -> TrackLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,
-                  thumbLabels: label)
+                  thumbLabels: label,
+                  accessibilityLabels: accessibilityLabels)
     }
 }
