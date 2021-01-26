@@ -13,7 +13,9 @@ struct ContentView: View {
 
     @State var type: ValueType = .one
 
-    enum ValueType: String, CaseIterable, CustomStringConvertible {
+    enum ValueType: String, CaseIterable, CustomStringConvertible, Identifiable {
+        var id: String { self.rawValue }
+
         case one, two, three, four
 
         var description: String { self.rawValue }
@@ -31,7 +33,7 @@ struct ContentView: View {
                 }
             }
             .accessibility(hidden: true)
-            StructuredSlider(selected: $value,
+            StepSlider(selected: $value,
                              values: [1, 15, 30, 45, 60, 90],
                              trackLabels: { Text("\($0)") },
                              thumbLabels: { Text("\($0) min") })
@@ -41,8 +43,8 @@ struct ContentView: View {
                 .trackHighlight(Color.blue)
                 .padding(20)
 
-            StructuredSlider(selected: $type,
-                             values: ValueType.allCases)
+            StepPicker(selected: $type,
+                       values: ValueType.allCases)
                 .accessibilityLabel(Text("Value Types"))
                 .padding(20)
 

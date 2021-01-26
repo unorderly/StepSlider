@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
+struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     public let values: [Value]
 
@@ -8,46 +8,50 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
 
     private let trackLabels: (Value) -> TrackLabel
     private let thumbLabels: (Value) -> ThumbLabel
-    private let accessibilityLabels: (Value) -> Text
 
     private let valueIndices: (Value, [Value]) -> (Int, Int)
 
     @State private var dragProgress: CGFloat = 0
-
     @State private var isDragging = false
+    @State private var selectionFeedback = UISelectionFeedbackGenerator()
+    @State private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
 
     @Environment(\.accentColor) var accentColor
     @Environment(\.trackBackground) var trackBackground
     @Environment(\.trackHighlight) var trackHighlight
+    @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
+
 
     init(selected: Binding<Value>,
                  values: [Value],
                  trackLabels: @escaping (Value) -> TrackLabel,
                  thumbLabels: @escaping (Value) -> ThumbLabel,
-                 accessibilityLabels: @escaping (Value) -> Text,
                  valueIndices: @escaping (Value, [Value]) -> (Int, Int)) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
-        self.accessibilityLabels = accessibilityLabels
         self.valueIndices = valueIndices
     }
 
     public var body: some View {
         HStack {
             ForEach(values, id: \.self) { value in
-                HStack {
-                    Spacer(minLength: 0)
-                    self.trackLabels(value)
-                        .font(.callout)
-                        .foregroundColor(.trackLabel)
-                        .minimumScaleFactor(0.1)
-                    Spacer(minLength: 0)
-                }
-                .onTapGesture {
+                Button(action: {
                     self.selected = value
+                }) {
+                    HStack {
+                        Spacer(minLength: 0)
+                        self.trackLabels(value)
+                            .font(.callout)
+                            .foregroundColor(.trackLabel)
+                            .minimumScaleFactor(0.1)
+                            .lineLimit(1)
+                            .padding(4)
+                        Spacer(minLength: 0)
+                    }
                 }
+                .accessibility(addTraits: value == selected ? .isSelected : [])
             }
         }
         .frame(minHeight: 44)
@@ -55,47 +59,27 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
         .background(highlightTrack)
         .padding(6)
         .background(trackBackground.cornerRadius(10))
-        .onChange(of: dragProgress, perform: { progress in
-            if isDragging {
-                self.selected = self.values.element(forProgress: progress)
-            }
-        })
-        .accessibilityElement(children: .ignore)
-        .accessibility(value: self.accessibilityLabels(selected))
-        .accessibility(hint: self.values.map(self.accessibilityLabels)
-                        .reduce(Text(""), { $0 + Text(", ") + $1 }))
-        .accessibilityAdjustableAction({ direction in
-            let (left, right) = self.valueIndices(selected, values)
-            switch direction {
-            case .increment:
-                let next = left == right ? right + 1 : right
-                if self.values.count > next {
-                    self.selected = self.values[next]
-                }
-            case .decrement:
-                let prev = left == right ? left - 1 : left
-                if prev >= 0 {
-                    self.selected = self.values[prev]
-                }
-            @unknown default:
-                break
-            }
-        })
+
+    }
+
+    private var animation: Animation? {
+        return self.accessibilityReduceMotion ? nil : .spring()
     }
 
     private var overlay: some View {
         GeometryReader { proxy in
             thumb(in: proxy)
         }
+        .accessibility(hidden: true)
     }
 
     private var highlightTrack: some View {
         GeometryReader { proxy in
             trackHighlight
                 .cornerRadius(10)
-                .padding(isDragging ? -6 : 0)
+                .padding(isDragging && !accessibilityReduceMotion ? -6 : 0)
                 .frame(width: self.values.thumbOffset(for: dragProgress, in: proxy.size.width) + self.values.elementWidth(in: proxy.size.width))
-                .animation(.spring(), value: isDragging)
+                .animation(self.animation, value: isDragging)
         }
     }
 
@@ -106,18 +90,31 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
             .background(
                 accentColor
                     .cornerRadius(10)
-                    .padding(isDragging ? -6 : 0)
+                    .padding(isDragging && !accessibilityReduceMotion ? -6 : 0)
             )
+            .shadow(color: Color.black.opacity(0.12), radius: 4)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: dragProgress, in: proxy.size.width))
-            .animation(.spring(), value: isDragging)
+            .animation(self.animation, value: isDragging)
             .onChange(of: selected, perform: { value in
+                self.selectionFeedback.selectionChanged()
                 if !isDragging {
                     let (left, right) = self.valueIndices(value, values)
                     let start = values.progress(for: left, in: proxy.size.width)
                     let end = values.progress(for: right, in: proxy.size.width)
-                    withAnimation(.spring()) {
+                    withAnimation(self.animation) {
                         self.dragProgress = (start + end) / 2
+                    }
+                }
+            })
+            .onChange(of: dragProgress, perform: { [dragProgress] progress in
+                if isDragging {
+                    self.selected = self.values.element(forProgress: progress)
+                    let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
+                    let startProgress = values.progress(for: 0, in: proxy.size.width)
+                    if (progress >= endProgress && dragProgress < endProgress)
+                        || (progress <= startProgress && dragProgress > startProgress) {
+                        self.impactFeedback.impactOccurred()
                     }
                 }
             })
@@ -126,12 +123,14 @@ public struct StructuredSlider<Value: Hashable, TrackLabel: View, ThumbLabel: Vi
                             self.isDragging = true
                             self.dragProgress = (value.location.x / proxy.size.width)
                                 .bound(by: 0...1)
+                            self.impactFeedback.prepare()
+                            self.selectionFeedback.prepare()
                         })
                         .onEnded({ value in
                             let progress = (value.location.x / proxy.size.width)
                                 .bound(by: 0...1)
                             let index = self.values.index(forProgress: progress)
-                            withAnimation(.spring()) {
+                            withAnimation(self.animation) {
                                 self.dragProgress = self.values.progress(for: index,
                                                                          in: proxy.size.width)
                                 self.isDragging = false
@@ -168,14 +167,14 @@ struct StructuredSlider_Previews: PreviewProvider {
             ScrollView {
                 Text("\(value) min")
                     .font(.title)
-                StructuredSlider(selected: $value,
+                StepSlider(selected: $value,
                                  values: [1, 15, 30, 45, 60, 90],
                                  trackLabels: { Text("\($0)") },
                                  thumbLabels: { Text("\($0) min") })
                     .trackHighlight(Color.blue)
                     .padding(20)
 
-                StructuredSlider(selected: $type,
+                StepPicker(selected: $type,
                                  values: ValueType.allCases)
                     .padding(20)
                 Button(action: {
