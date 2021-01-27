@@ -23,31 +23,38 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView {
-            HStack {
-                Text("\(value) min")
-                Spacer()
-                Button(action: {
-                    self.value = 5
-                }) {
-                    Text("Reset")
+            VStack {
+                HStack {
+                    Text("\(value) min")
+                    Spacer()
+                    Button(action: {
+//                        withAnimation(.spring()) {
+                            self.value = 5
+//                        }
+                    }) {
+                        Text("Reset")
+                    }
                 }
+                .accessibility(hidden: true)
+
+                StepSlider(selected: $value,
+                           values: [1, 15, 30, 45, 60, 90],
+                           trackLabels: { Text("\($0)") },
+                           thumbLabels: { Text("\($0) min") })
+                    .accessibilityLabel(Text("Duration"))
+                    .accessibilityAction(named: "Edit", {
+//                        withAnimation(.spring()) {
+                            self.value = 5
+//                        }
+                    })
+                    .accessibility(identifier: "example.slider.duration")
+                    .trackHighlight(Color.blue)
+
+                StepPicker(selected: $type,
+                           values: ValueType.allCases)
+                    .accessibilityLabel(Text("Value Types"))
             }
-            .accessibility(hidden: true)
-            StepSlider(selected: $value,
-                             values: [1, 15, 30, 45, 60, 90],
-                             trackLabels: { Text("\($0)") },
-                             thumbLabels: { Text("\($0) min") })
-                .accessibilityLabel(Text("Duration"))
-                .accessibilityAction(named: "Edit", { self.value = 5 })
-                .accessibility(identifier: "example.slider.duration")
-                .trackHighlight(Color.blue)
-                .padding(20)
-
-            StepPicker(selected: $type,
-                       values: ValueType.allCases)
-                .accessibilityLabel(Text("Value Types"))
-                .padding(20)
-
+            .padding(20)
         }
     }
 }

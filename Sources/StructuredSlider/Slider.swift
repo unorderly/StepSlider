@@ -11,10 +11,10 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private let valueIndices: (Value, [Value]) -> (Int, Int)
 
-    @State private var dragProgress: CGFloat = 0
-    @State private var isDragging = false
     @State private var selectionFeedback = UISelectionFeedbackGenerator()
     @State private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+
+    @GestureState private var dragState: CGFloat? = nil
 
     @Environment(\.accentColor) var accentColor
     @Environment(\.trackBackground) var trackBackground
@@ -38,7 +38,9 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         HStack {
             ForEach(values, id: \.self) { value in
                 Button(action: {
-                    self.selected = value
+                    withAnimation(self.animation) {
+                        self.selected = value
+                    }
                 }) {
                     HStack {
                         Spacer(minLength: 0)
@@ -73,13 +75,24 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         .accessibility(hidden: true)
     }
 
+    private func dragProgress(in width: CGFloat) -> CGFloat {
+        if let progress = self.dragState {
+            return progress
+        } else {
+            let (left, right) = self.valueIndices(selected, values)
+            let start = values.progress(for: left, in: width)
+            let end = values.progress(for: right, in: width)
+            return (start + end) / 2
+        }
+    }
+
     private var highlightTrack: some View {
         GeometryReader { proxy in
             trackHighlight
                 .cornerRadius(10)
-                .padding(isDragging && !accessibilityReduceMotion ? -6 : 0)
-                .frame(width: self.values.thumbOffset(for: dragProgress, in: proxy.size.width) + self.values.elementWidth(in: proxy.size.width))
-                .animation(self.animation, value: isDragging)
+                .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
+                .frame(width: self.values.thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values.elementWidth(in: proxy.size.width))
+                .animation(self.animation, value: dragState != nil)
         }
     }
 
@@ -90,51 +103,33 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .background(
                 accentColor
                     .cornerRadius(10)
-                    .padding(isDragging && !accessibilityReduceMotion ? -6 : 0)
+                    .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
             )
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
-            .offset(x: self.values.thumbOffset(for: dragProgress, in: proxy.size.width))
-            .animation(self.animation, value: isDragging)
+            .offset(x: self.values.thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width))
+            .animation(self.animation, value: dragState != nil)
             .onChange(of: selected, perform: { value in
                 self.selectionFeedback.selectionChanged()
-                if !isDragging {
-                    let (left, right) = self.valueIndices(value, values)
-                    let start = values.progress(for: left, in: proxy.size.width)
-                    let end = values.progress(for: right, in: proxy.size.width)
-                    withAnimation(self.animation) {
-                        self.dragProgress = (start + end) / 2
-                    }
-                }
             })
-            .onChange(of: dragProgress, perform: { [dragProgress] progress in
-                if isDragging {
+            .onChange(of: dragState, perform: { [dragState] state in
+                if let progress = state ?? dragState {
                     self.selected = self.values.element(forProgress: progress)
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
                     let startProgress = values.progress(for: 0, in: proxy.size.width)
-                    if (progress >= endProgress && dragProgress < endProgress)
-                        || (progress <= startProgress && dragProgress > startProgress) {
+                    if let previous = dragState,
+                       (progress >= endProgress && previous < endProgress)
+                        || (progress <= startProgress && previous > startProgress) {
                         self.impactFeedback.impactOccurred()
                     }
                 }
             })
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                        .onChanged({ value in
-                            self.isDragging = true
-                            self.dragProgress = (value.location.x / proxy.size.width)
-                                .bound(by: 0...1)
+                        .updating($dragState, body: { value, state, _ in
                             self.impactFeedback.prepare()
                             self.selectionFeedback.prepare()
-                        })
-                        .onEnded({ value in
-                            let progress = (value.location.x / proxy.size.width)
+                            state = (value.location.x / proxy.size.width)
                                 .bound(by: 0...1)
-                            let index = self.values.index(forProgress: progress)
-                            withAnimation(self.animation) {
-                                self.dragProgress = self.values.progress(for: index,
-                                                                         in: proxy.size.width)
-                                self.isDragging = false
-                            }
                         })
             )
     }
