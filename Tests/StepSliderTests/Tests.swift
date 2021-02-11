@@ -1,7 +1,7 @@
 import XCTest
-@testable import StructuredSlider
+@testable import StepSlider
 
-final class StructuredSliderTests: XCTestCase {
+final class StepSliderTests: XCTestCase {
     func testElementWidth() {
         let steps = Array(repeating: 0, count: 6)
         XCTAssertEqual(steps.elementWidth(in: 323).rounded(), 54)

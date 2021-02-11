@@ -1,3 +1,3 @@
-# StructuredSlider
+# StepSlider
 
-A description of this package.
+This package contains a custom slider and picker built with SwiftUI. 

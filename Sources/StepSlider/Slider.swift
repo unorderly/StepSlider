@@ -38,9 +38,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         HStack {
             ForEach(values, id: \.self) { value in
                 Button(action: {
-                    withAnimation(self.animation) {
-                        self.selected = value
-                    }
+                    self.selected = value
                 }) {
                     HStack {
                         Spacer(minLength: 0)
@@ -92,7 +90,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                 .cornerRadius(10)
                 .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
                 .frame(width: self.values.thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values.elementWidth(in: proxy.size.width))
-                .animation(self.animation, value: dragState != nil)
+                .animation(self.animation, value: dragState != nil ? 0 : selected.hashValue)
+
         }
     }
 
@@ -108,7 +107,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width))
-            .animation(self.animation, value: dragState != nil)
+            .animation(self.animation, value: dragState != nil ? 0 : selected.hashValue)
             .onChange(of: selected, perform: { value in
                 self.selectionFeedback.selectionChanged()
             })
@@ -145,7 +144,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     }
 }
 
-struct StructuredSlider_Previews: PreviewProvider {
+struct StepSlider_Previews: PreviewProvider {
 
     struct Preview: View {
         @State var value: Int = 1
@@ -178,6 +177,9 @@ struct StructuredSlider_Previews: PreviewProvider {
                     Text("Reset")
                 }
             }
+            .transition(AnyTransition.opacity.animation(Animation.default)
+                            .combined(with: .move(edge: .bottom)))
+            .animation(.spring())
         }
     }
     static var previews: some View {

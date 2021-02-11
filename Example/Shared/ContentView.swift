@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-import StructuredSlider
+import StepSlider
 
 struct ContentView: View {
-    @State var value: Int = 1
+    @State var value: Int = 30
 
     @State var type: ValueType = .one
 
@@ -28,9 +28,7 @@ struct ContentView: View {
                     Text("\(value) min")
                     Spacer()
                     Button(action: {
-//                        withAnimation(.spring()) {
                             self.value = 5
-//                        }
                     }) {
                         Text("Reset")
                     }
@@ -39,22 +37,36 @@ struct ContentView: View {
 
                 StepSlider(selected: $value,
                            values: [1, 15, 30, 45, 60, 90],
-                           trackLabels: { Text("\($0)") },
-                           thumbLabels: { Text("\($0) min") })
+                           trackLabels: { step in
+                            Group {
+                                if step < value {
+                                    Text("\(step)")
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    Text("\(step)")
+                                }
+                            }
+                           },
+                           thumbLabels: {
+                            Text("\($0) min").foregroundColor(.white)
+                           })
+                    .trackHighlight(Color("accent").opacity(0.2))
                     .accessibilityLabel(Text("Duration"))
                     .accessibilityAction(named: "Edit", {
-//                        withAnimation(.spring()) {
                             self.value = 5
-//                        }
                     })
                     .accessibility(identifier: "example.slider.duration")
-                    .trackHighlight(Color.blue)
 
                 StepPicker(selected: $type,
-                           values: ValueType.allCases)
+                           values: ValueType.allCases,
+                           trackLabels: { Text($0.description) },
+                           thumbLabels: {
+                            Text($0.description).foregroundColor(.white)
+                           })
                     .accessibilityLabel(Text("Value Types"))
             }
             .padding(20)
+            .sliderAccentColor(Color("accent"))
         }
     }
 }

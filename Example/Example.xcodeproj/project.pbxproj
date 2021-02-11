@@ -13,8 +13,8 @@
 		B699590D25BF541200FD003E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69958F825BF541000FD003E /* ContentView.swift */; };
 		B699590E25BF541200FD003E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B69958F925BF541200FD003E /* Assets.xcassets */; };
 		B699590F25BF541200FD003E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B69958F925BF541200FD003E /* Assets.xcassets */; };
-		B699592125BF542800FD003E /* StructuredSlider in Frameworks */ = {isa = PBXBuildFile; productRef = B699592025BF542800FD003E /* StructuredSlider */; };
-		B699592325BF542E00FD003E /* StructuredSlider in Frameworks */ = {isa = PBXBuildFile; productRef = B699592225BF542E00FD003E /* StructuredSlider */; };
+		B6EBA31225C1D315004D5DB2 /* StepSlider in Frameworks */ = {isa = PBXBuildFile; productRef = B6EBA31125C1D315004D5DB2 /* StepSlider */; };
+		B6EBA31625C1D31D004D5DB2 /* StepSlider in Frameworks */ = {isa = PBXBuildFile; productRef = B6EBA31525C1D31D004D5DB2 /* StepSlider */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B699592125BF542800FD003E /* StructuredSlider in Frameworks */,
+				B6EBA31225C1D315004D5DB2 /* StepSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,7 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B699592325BF542E00FD003E /* StructuredSlider in Frameworks */,
+				B6EBA31625C1D31D004D5DB2 /* StepSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +121,7 @@
 			);
 			name = "Example (iOS)";
 			packageProductDependencies = (
-				B699592025BF542800FD003E /* StructuredSlider */,
+				B6EBA31125C1D315004D5DB2 /* StepSlider */,
 			);
 			productName = "Example (iOS)";
 			productReference = B69958FE25BF541200FD003E /* Example.app */;
@@ -141,7 +141,7 @@
 			);
 			name = "Example (macOS)";
 			packageProductDependencies = (
-				B699592225BF542E00FD003E /* StructuredSlider */,
+				B6EBA31525C1D31D004D5DB2 /* StepSlider */,
 			);
 			productName = "Example (macOS)";
 			productReference = B699590625BF541200FD003E /* Example.app */;
@@ -154,7 +154,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					B69958FD25BF541200FD003E = {
 						CreatedOnToolsVersion = 12.3;
@@ -386,6 +386,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = P459Y32P65;
@@ -410,6 +411,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = P459Y32P65;
@@ -461,13 +463,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B699592025BF542800FD003E /* StructuredSlider */ = {
+		B6EBA31125C1D315004D5DB2 /* StepSlider */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = StructuredSlider;
+			productName = StepSlider;
 		};
-		B699592225BF542E00FD003E /* StructuredSlider */ = {
+		B6EBA31525C1D31D004D5DB2 /* StepSlider */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = StructuredSlider;
+			productName = StepSlider;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
