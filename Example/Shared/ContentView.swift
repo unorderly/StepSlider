@@ -35,27 +35,29 @@ struct ContentView: View {
                 }
                 .accessibility(hidden: true)
 
-                StepSlider(selected: $value,
-                           values: [1, 15, 30, 45, 60, 90],
-                           trackLabels: { step in
-                            Group {
-                                if step < value {
-                                    Text("\(step)")
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    Text("\(step)")
+//                ForEach(0..<5) { _ in
+                    StepSlider(selected: $value,
+                               values: [1, 15, 30, 45, 60, 90],
+                               trackLabels: { step in
+                                Group {
+                                    if step < value {
+                                        Text("\(step)")
+                                            .foregroundColor(.secondary)
+                                    } else {
+                                        Text("\(step)")
+                                    }
                                 }
-                            }
-                           },
-                           thumbLabels: {
-                            Text("\($0) min").foregroundColor(.white)
-                           })
-                    .trackHighlight(Color("accent").opacity(0.2))
-                    .accessibilityLabel(Text("Duration"))
-                    .accessibilityAction(named: "Edit", {
+                               },
+                               thumbLabels: {
+                                Text("\($0) min").foregroundColor(.white)
+                               })
+//                        .trackHighlight(Color("accent").opacity(0.2))
+                        .accessibilityLabel(Text("Duration"))
+                        .accessibilityAction(named: "Edit", {
                             self.value = 5
-                    })
-                    .accessibility(identifier: "example.slider.duration")
+                        })
+                        .accessibility(identifier: "example.slider.duration")
+//                }
 
                 StepPicker(selected: $type,
                            values: ValueType.allCases,

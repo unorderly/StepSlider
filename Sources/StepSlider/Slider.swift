@@ -1,5 +1,42 @@
 import SwiftUI
 
+struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
+    static func == (lhs: SliderTrack<Value, TrackLabel>, rhs: SliderTrack<Value, TrackLabel>) -> Bool {
+        return lhs.selected == rhs.selected && lhs.values == rhs.values
+    }
+
+    @Binding var selected: Value
+    let values: [Value]
+
+    let trackLabels: (Value) -> TrackLabel
+
+    var body: some View {
+        HStack {
+            ForEach(values, id: \.self) { value in
+                Button(action: {
+                    self.selected = value
+                }) {
+                    HStack {
+                        Spacer(minLength: 0)
+                        self.trackLabels(value)
+                            .font(.callout)
+                            .foregroundColor(.trackLabel)
+                            .minimumScaleFactor(0.1)
+                            .lineLimit(1)
+                            .padding(4)
+                        Spacer(minLength: 0)
+                    }
+                }
+                .accessibility(addTraits: value == selected ? .isSelected : [])
+            }
+        }
+        .frame(minHeight: 44)
+    }
+}
+
+private var selectionFeedback = UISelectionFeedbackGenerator()
+private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+
 struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     public let values: [Value]
@@ -11,8 +48,6 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private let valueIndices: (Value, [Value]) -> (Int, Int)
 
-    @State private var selectionFeedback = UISelectionFeedbackGenerator()
-    @State private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
 
     @GestureState private var dragState: CGFloat? = nil
 
@@ -35,26 +70,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     }
 
     public var body: some View {
-        HStack {
-            ForEach(values, id: \.self) { value in
-                Button(action: {
-                    self.selected = value
-                }) {
-                    HStack {
-                        Spacer(minLength: 0)
-                        self.trackLabels(value)
-                            .font(.callout)
-                            .foregroundColor(.trackLabel)
-                            .minimumScaleFactor(0.1)
-                            .lineLimit(1)
-                            .padding(4)
-                        Spacer(minLength: 0)
-                    }
-                }
-                .accessibility(addTraits: value == selected ? .isSelected : [])
-            }
-        }
-        .frame(minHeight: 44)
+        SliderTrack(selected: $selected, values: values, trackLabels: trackLabels)
+            .equatable()
         .overlay(overlay)
         .background(highlightTrack)
         .padding(6)
@@ -109,24 +126,27 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .offset(x: self.values.thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: dragState != nil ? 0 : selected.hashValue)
             .onChange(of: selected, perform: { value in
-                self.selectionFeedback.selectionChanged()
+                selectionFeedback.selectionChanged()
             })
             .onChange(of: dragState, perform: { [dragState] state in
                 if let progress = state ?? dragState {
-                    self.selected = self.values.element(forProgress: progress)
+
+                    let selected = self.values.element(forProgress: progress)
+                    if self.selected != selected {
+                        self.selected = selected
+                    }
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
                     let startProgress = values.progress(for: 0, in: proxy.size.width)
                     if let previous = dragState,
                        (progress >= endProgress && previous < endProgress)
                         || (progress <= startProgress && previous > startProgress) {
-                        self.impactFeedback.impactOccurred()
+                        impactFeedback.impactOccurred()
                     }
                 }
             })
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                         .updating($dragState, body: { value, state, _ in
-                            self.impactFeedback.prepare()
-                            self.selectionFeedback.prepare()
+
                             state = (value.location.x / proxy.size.width)
                                 .bound(by: 0...1)
                         })
