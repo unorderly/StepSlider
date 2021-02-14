@@ -1,36 +1,5 @@
 import SwiftUI
 
-//MARK: - Accent color
-
-struct AccentColorKey: EnvironmentKey {
-    static var defaultValue: Color = .red
-}
-
-
-extension EnvironmentValues {
-    public var accentColor: Color {
-        get { self[AccentColorKey.self] }
-        set { self[AccentColorKey.self] = newValue }
-    }
-}
-
-struct AccentColorModifier: ViewModifier {
-
-    let color: Color
-
-    func body(content: Content) -> some View {
-        content
-            .accentColor(color)
-            .environment(\.accentColor, color)
-    }
-}
-
-extension View {
-    public func sliderAccentColor(_ color: Color) -> some View {
-        self.modifier(AccentColorModifier(color: color))
-    }
-}
-
 //MARK: - Track Background
 
 struct TrackBackgroundKey: EnvironmentKey {

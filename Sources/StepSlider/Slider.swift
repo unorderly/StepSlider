@@ -51,7 +51,6 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     @GestureState private var dragState: CGFloat? = nil
 
-    @Environment(\.accentColor) var accentColor
     @Environment(\.trackBackground) var trackBackground
     @Environment(\.trackHighlight) var trackHighlight
     @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
@@ -117,7 +116,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .foregroundColor(.clear)
             .overlay(thumbText)
             .background(
-                accentColor
+                Color.accentColor
                     .cornerRadius(10)
                     .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
             )
