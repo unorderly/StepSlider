@@ -1,10 +1,3 @@
-//
-//  ExampleApp.swift
-//  Shared
-//
-//  Created by Leonard Mehlig on 25.01.21.
-//
-
 import SwiftUI
 
 @main

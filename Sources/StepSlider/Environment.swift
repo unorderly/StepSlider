@@ -1,11 +1,10 @@
 import SwiftUI
 
-//MARK: - Track Background
+// MARK: - Track Background
 
 struct TrackBackgroundKey: EnvironmentKey {
-    static var defaultValue: AnyView = AnyView(Color.trackBackground)
+    static var defaultValue = AnyView(Color.trackBackground)
 }
-
 
 extension EnvironmentValues {
     public var trackBackground: AnyView {
@@ -15,12 +14,11 @@ extension EnvironmentValues {
 }
 
 struct TrackBackgroundModifier<Background: View>: ViewModifier {
-
     let background: Background
 
     func body(content: Content) -> some View {
         content
-            .environment(\.trackBackground, AnyView(background))
+            .environment(\.trackBackground, AnyView(self.background))
     }
 }
 
@@ -30,12 +28,11 @@ extension View {
     }
 }
 
-//MARK: - Track Highlight
+// MARK: - Track Highlight
 
 struct TrackHighlightKey: EnvironmentKey {
-    static var defaultValue: AnyView = AnyView(EmptyView())
+    static var defaultValue = AnyView(EmptyView())
 }
-
 
 extension EnvironmentValues {
     public var trackHighlight: AnyView {
@@ -45,12 +42,11 @@ extension EnvironmentValues {
 }
 
 struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
-
     let highlight: Hightlight
 
     func body(content: Content) -> some View {
         content
-            .environment(\.trackHighlight, AnyView(highlight))
+            .environment(\.trackHighlight, AnyView(self.highlight))
     }
 }
 

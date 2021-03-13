@@ -1,14 +1,6 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Leonard Mehlig on 26.01.21.
-//
-
 import SwiftUI
 
 public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View where Value: Comparable {
-
     public let values: [Value]
 
     @Binding public var selected: Value
@@ -19,17 +11,15 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
 
     public init(selected: Binding<Value>,
                 values: [Value],
-                 trackLabels: @escaping (Value) -> TrackLabel,
-                 thumbLabels: @escaping (Value) -> ThumbLabel,
-                 accessibilityLabels: @escaping (Value) -> Text) {
+                trackLabels: @escaping (Value) -> TrackLabel,
+                thumbLabels: @escaping (Value) -> ThumbLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
         self.accessibilityLabels = accessibilityLabels
-
     }
-
 
     public var body: some View {
         Slider(selected: $selected,
@@ -40,24 +30,24 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
             .accessibilityElement(children: .ignore)
             .accessibility(value: self.accessibilityLabels(selected))
             .accessibility(hint: self.values.map(self.accessibilityLabels)
-                            .reduce(Text(""), { $0 + Text(", ") + $1 }))
-            .accessibilityAdjustableAction({ direction in
+                .reduce(Text("")) { $0 + Text(", ") + $1 })
+            .accessibilityAdjustableAction { direction in
                 let (left, right) = self.valueIndices(for: selected, values: values)
                 switch direction {
-                case .increment:
-                    let next = left == right ? right + 1 : right
-                    if self.values.count > next {
-                        self.selected = self.values[next]
-                    }
-                case .decrement:
-                    let prev = left == right ? left - 1 : left
-                    if prev >= 0 {
-                        self.selected = self.values[prev]
-                    }
-                @unknown default:
-                    break
+                    case .increment:
+                        let next = left == right ? right + 1 : right
+                        if self.values.count > next {
+                            self.selected = self.values[next]
+                        }
+                    case .decrement:
+                        let prev = left == right ? left - 1 : left
+                        if prev >= 0 {
+                            self.selected = self.values[prev]
+                        }
+                    @unknown default:
+                        break
                 }
-            })
+            }
     }
 
     func valueIndices(for value: Value, values: [Value]) -> (Int, Int) {

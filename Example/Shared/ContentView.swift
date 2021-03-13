@@ -1,12 +1,5 @@
-//
-//  ContentView.swift
-//  Shared
-//
-//  Created by Leonard Mehlig on 25.01.21.
-//
-
-import SwiftUI
 import StepSlider
+import SwiftUI
 
 struct ContentView: View {
     @State var value: Int = 30
@@ -28,7 +21,7 @@ struct ContentView: View {
                     Text("\(value) min")
                     Spacer()
                     Button(action: {
-                            self.value = 5
+                        self.value = 5
                     }) {
                         Text("Reset")
                     }
@@ -36,34 +29,34 @@ struct ContentView: View {
                 .accessibility(hidden: true)
 
 //                ForEach(0..<5) { _ in
-                    StepSlider(selected: $value,
-                               values: [1, 15, 30, 45, 60, 90],
-                               trackLabels: { step in
-                                Group {
-                                    if step < value {
-                                        Text("\(step)")
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        Text("\(step)")
-                                    }
-                                }
-                               },
-                               thumbLabels: {
-                                Text("\($0) min").foregroundColor(.white)
-                               })
+                StepSlider(selected: $value,
+                           values: [1, 15, 30, 45, 60, 90],
+                           trackLabels: { step in
+                               Group {
+                                   if step < value {
+                                       Text("\(step)")
+                                           .foregroundColor(.secondary)
+                                   } else {
+                                       Text("\(step)")
+                                   }
+                               }
+                           },
+                           thumbLabels: {
+                               Text("\($0) min").foregroundColor(.white)
+                           })
 //                        .trackHighlight(Color("accent").opacity(0.2))
-                        .accessibilityLabel(Text("Duration"))
-                        .accessibilityAction(named: "Edit", {
-                            self.value = 5
-                        })
-                        .accessibility(identifier: "example.slider.duration")
+                    .accessibilityLabel(Text("Duration"))
+                    .accessibilityAction(named: "Edit") {
+                        self.value = 5
+                    }
+                    .accessibility(identifier: "example.slider.duration")
 //                }
 
                 StepPicker(selected: $type,
                            values: ValueType.allCases,
                            trackLabels: { Text($0.description) },
                            thumbLabels: {
-                            Text($0.description).foregroundColor(.white)
+                               Text($0.description).foregroundColor(.white)
                            })
                     .accessibilityLabel(Text("Value Types"))
             }

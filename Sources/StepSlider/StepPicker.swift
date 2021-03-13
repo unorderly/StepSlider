@@ -2,7 +2,6 @@
 import SwiftUI
 
 public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
-
     public let values: [Value]
 
     @Binding public var selected: Value
@@ -12,14 +11,13 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
 
     public init(selected: Binding<Value>,
                 values: [Value],
-                 trackLabels: @escaping (Value) -> TrackLabel,
-                 thumbLabels: @escaping (Value) -> ThumbLabel) {
+                trackLabels: @escaping (Value) -> TrackLabel,
+                thumbLabels: @escaping (Value) -> ThumbLabel) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
     }
-
 
     public var body: some View {
         Slider(selected: $selected,
@@ -49,13 +47,13 @@ extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, T
     }
 }
 
-extension StepPicker where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
+extension StepPicker where TrackLabel == ThumbLabel {
     public init(selected: Binding<Value>,
                 values: [Value],
-                label: @escaping (Value) -> TrackLabel) {
+                labels: @escaping (Value) -> TrackLabel) {
         self.init(selected: selected,
                   values: values,
-                  trackLabels: label,
-                  thumbLabels: label)
+                  trackLabels: labels,
+                  thumbLabels: labels)
     }
 }

@@ -1,5 +1,5 @@
-import XCTest
 @testable import StepSlider
+import XCTest
 
 final class StepSliderTests: XCTestCase {
     func testElementWidth() {
@@ -34,7 +34,5 @@ final class StepSliderTests: XCTestCase {
     func testProgress() {
         let steps = Array(repeating: 0, count: 5)
         XCTAssertEqual(steps.progress(for: 2, in: 323), 0.5)
-
     }
-
 }
