@@ -37,9 +37,9 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 }
 
-extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    public init(selected: Binding<Value>,
-                values: [Value]) {
+public extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    init(selected: Binding<Value>,
+         values: [Value]) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: { Text($0.description) },
@@ -47,10 +47,10 @@ extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, T
     }
 }
 
-extension StepPicker where TrackLabel == ThumbLabel {
-    public init(selected: Binding<Value>,
-                values: [Value],
-                labels: @escaping (Value) -> TrackLabel) {
+public extension StepPicker where TrackLabel == ThumbLabel {
+    init(selected: Binding<Value>,
+         values: [Value],
+         labels: @escaping (Value) -> TrackLabel) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: labels,

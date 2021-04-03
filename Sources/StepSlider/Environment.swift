@@ -6,8 +6,8 @@ struct TrackBackgroundKey: EnvironmentKey {
     static var defaultValue = AnyView(Color.trackBackground)
 }
 
-extension EnvironmentValues {
-    public var trackBackground: AnyView {
+public extension EnvironmentValues {
+    var trackBackground: AnyView {
         get { self[TrackBackgroundKey.self] }
         set { self[TrackBackgroundKey.self] = newValue }
     }
@@ -22,8 +22,8 @@ struct TrackBackgroundModifier<Background: View>: ViewModifier {
     }
 }
 
-extension View {
-    public func trackBackground<Content: View>(_ content: Content) -> some View {
+public extension View {
+    func trackBackground<Content: View>(_ content: Content) -> some View {
         self.modifier(TrackBackgroundModifier(background: content))
     }
 }
@@ -34,8 +34,8 @@ struct TrackHighlightKey: EnvironmentKey {
     static var defaultValue = AnyView(EmptyView())
 }
 
-extension EnvironmentValues {
-    public var trackHighlight: AnyView {
+public extension EnvironmentValues {
+    var trackHighlight: AnyView {
         get { self[TrackHighlightKey.self] }
         set { self[TrackHighlightKey.self] = newValue }
     }
@@ -50,8 +50,8 @@ struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
     }
 }
 
-extension View {
-    @ViewBuilder public func trackHighlight<Content: View>(_ content: Content?) -> some View {
+public extension View {
+    @ViewBuilder func trackHighlight<Content: View>(_ content: Content?) -> some View {
         if let content = content {
             self.modifier(TrackHighlightModifier(highlight: content))
         } else {

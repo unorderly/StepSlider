@@ -67,11 +67,11 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 }
 
-extension StepSlider where ThumbLabel == Text {
-    public init(selected: Binding<Value>,
-                values: [Value],
-                trackLabels: @escaping (Value) -> TrackLabel,
-                thumbLabels: @escaping (Value) -> ThumbLabel) {
+public extension StepSlider where ThumbLabel == Text {
+    init(selected: Binding<Value>,
+         values: [Value],
+         trackLabels: @escaping (Value) -> TrackLabel,
+         thumbLabels: @escaping (Value) -> ThumbLabel) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: trackLabels,
@@ -80,9 +80,9 @@ extension StepSlider where ThumbLabel == Text {
     }
 }
 
-extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    public init(selected: Binding<Value>,
-                values: [Value]) {
+public extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    init(selected: Binding<Value>,
+         values: [Value]) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: { Text($0.description) },
@@ -90,11 +90,11 @@ extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, T
     }
 }
 
-extension StepSlider where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
-    public init(selected: Binding<Value>,
-                values: [Value],
-                label: @escaping (Value) -> TrackLabel,
-                accessibilityLabels: @escaping (Value) -> Text) {
+public extension StepSlider where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
+    init(selected: Binding<Value>,
+         values: [Value],
+         label: @escaping (Value) -> TrackLabel,
+         accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,
@@ -103,10 +103,10 @@ extension StepSlider where Value: CustomStringConvertible, TrackLabel == ThumbLa
     }
 }
 
-extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    public init(selected: Binding<Value>,
-                values: [Value],
-                label: @escaping (Value) -> Text) {
+public extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    init(selected: Binding<Value>,
+         values: [Value],
+         label: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,

@@ -131,8 +131,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
                     let startProgress = values.progress(for: 0, in: proxy.size.width)
                     if let previous = dragState,
-                        (progress >= endProgress && previous < endProgress)
-                        || (progress <= startProgress && previous > startProgress) {
+                       (progress >= endProgress && previous < endProgress)
+                       || (progress <= startProgress && previous > startProgress) {
                         impactFeedback.impactOccurred()
                     }
                 }
