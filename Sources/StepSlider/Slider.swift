@@ -34,8 +34,10 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     }
 }
 
+#if canImport(UIKit)
 private var selectionFeedback = UISelectionFeedbackGenerator()
 private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+#endif
 
 struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     public let values: [Value]
@@ -120,7 +122,9 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
             .onChange(of: self.selected, perform: { _ in
+                #if canImport(UIKit)
                 selectionFeedback.selectionChanged()
+                #endif
             })
             .onChange(of: self.dragState, perform: { [dragState] state in
                 if let progress = state ?? dragState {
@@ -130,11 +134,13 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     }
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
                     let startProgress = values.progress(for: 0, in: proxy.size.width)
+                #if canImport(UIKit)
                     if let previous = dragState,
                        (progress >= endProgress && previous < endProgress)
                        || (progress <= startProgress && previous > startProgress) {
                         impactFeedback.impactOccurred()
                     }
+                #endif
                 }
             })
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
