@@ -54,6 +54,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     @Environment(\.trackBackground) var trackBackground
     @Environment(\.trackHighlight) var trackHighlight
     @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
+    @Environment(\.layoutDirection) var layoutDirection
 
     init(selected: Binding<Value>,
          values: [Value],
@@ -146,8 +147,13 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                 .updating($dragState, body: { value, state, _ in
 
-                    state = (value.location.x / proxy.size.width)
-                        .bound(by: 0 ... 1)
+                    if self.layoutDirection == .leftToRight {
+                        state = (value.location.x / proxy.size.width)
+                            .bound(by: 0 ... 1)
+                    } else {
+                        state = ((-value.location.x + self.values.elementWidth(in: proxy.size.width)) / proxy.size.width)
+                            .bound(by: 0 ... 1)
+                    }
                 }))
     }
 

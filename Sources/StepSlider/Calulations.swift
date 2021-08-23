@@ -2,7 +2,9 @@ import SwiftUI
 
 extension Array {
     func index(for position: CGFloat, in width: CGFloat) -> Int {
-        self.index(forProgress: position / width)
+        let elWidth = self.elementWidth(in: width)
+
+        return self.index(forProgress: position / (width - elWidth))
     }
 
     func index(forProgress progress: CGFloat) -> Int {
