@@ -30,7 +30,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                 .accessibility(addTraits: value == selected ? .isSelected : [])
             }
         }
-        .frame(minHeight: 44)
+//        .frame(minHeight: 44)
     }
 }
 
