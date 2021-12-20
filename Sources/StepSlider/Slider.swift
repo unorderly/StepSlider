@@ -9,6 +9,12 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     let values: [Value]
 
     let trackLabels: (Value) -> TrackLabel
+    
+    #if targetEnvironment(macCatalyst)
+    @ScaledMetric(relativeTo: .callout) var size: CGFloat = 38
+    #else
+    @ScaledMetric(relativeTo: .callout) var size: CGFloat = 44
+    #endif
 
     var body: some View {
         HStack {
@@ -30,7 +36,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                 .accessibility(addTraits: value == selected ? .isSelected : [])
             }
         }
-//        .frame(minHeight: 44)
+        .frame(minHeight: size)
     }
 }
 
