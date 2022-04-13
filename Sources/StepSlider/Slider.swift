@@ -33,6 +33,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                         Spacer(minLength: 0)
                     }
                 }
+                .buttonStyle(.plain)
                 .accessibility(addTraits: value == selected ? .isSelected : [])
             }
         }
