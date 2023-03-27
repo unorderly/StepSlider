@@ -32,12 +32,13 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                             .padding(4)
                         Spacer(minLength: 0)
                     }
+                    .frame(minHeight: size)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibility(addTraits: value == selected ? .isSelected : [])
             }
         }
-        .frame(minHeight: size)
     }
 }
 
