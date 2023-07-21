@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
