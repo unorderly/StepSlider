@@ -1,4 +1,3 @@
-import SwiftUI
 
 extension Array {
     func index(for position: CGFloat, in width: CGFloat) -> Int {
