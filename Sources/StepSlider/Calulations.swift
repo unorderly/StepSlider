@@ -1,3 +1,5 @@
+import Foundation
+
 extension Array {
     func index(for position: CGFloat, in width: CGFloat) -> Int {
         let elWidth = self.elementWidth(in: width)
