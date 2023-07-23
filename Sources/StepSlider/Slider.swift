@@ -9,7 +9,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     let values: [Value]
 
     let trackLabels: (Value) -> TrackLabel
-    
+
     #if targetEnvironment(macCatalyst)
     @ScaledMetric(relativeTo: .callout) var size: CGFloat = 38
     #else
@@ -43,8 +43,8 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
 }
 
 #if canImport(UIKit)
-    private var selectionFeedback = UISelectionFeedbackGenerator()
-    private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+private var selectionFeedback = UISelectionFeedbackGenerator()
+private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
 #endif
 
 struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
@@ -113,8 +113,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                 .cornerRadius(10)
                 .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
                 .frame(width: self.values
-                    .thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
-                    .elementWidth(in: proxy.size.width))
+                        .thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
+                        .elementWidth(in: proxy.size.width))
                 .animation(self.animation, value: dragState != nil ? 0 : selected.hashValue)
         }
     }
@@ -124,15 +124,15 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .foregroundColor(.clear)
             .overlay(self.thumbText)
             .background(Color.accentColor
-                .cornerRadius(10)
-                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0))
+                            .cornerRadius(10)
+                            .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0))
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
             .onChange(of: self.selected, perform: { _ in
                 #if canImport(UIKit)
-                    selectionFeedback.selectionChanged()
+                selectionFeedback.selectionChanged()
                 #endif
             })
             .onChange(of: self.dragState, perform: { [dragState] state in
@@ -144,25 +144,25 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
                     let startProgress = values.progress(for: 0, in: proxy.size.width)
                     #if canImport(UIKit)
-                        if let previous = dragState,
-                           (progress >= endProgress && previous < endProgress)
-                           || (progress <= startProgress && previous > startProgress) {
-                            impactFeedback.impactOccurred()
-                        }
+                    if let previous = dragState,
+                       (progress >= endProgress && previous < endProgress)
+                        || (progress <= startProgress && previous > startProgress) {
+                        impactFeedback.impactOccurred()
+                    }
                     #endif
                 }
             })
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                .updating($dragState, body: { value, state, _ in
+                        .updating($dragState, body: { value, state, _ in
 
-                    if self.layoutDirection == .leftToRight {
-                        state = (value.location.x / proxy.size.width)
-                            .bound(by: 0 ... 1)
-                    } else {
-                        state = ((-value.location.x + self.values.elementWidth(in: proxy.size.width)) / proxy.size.width)
-                            .bound(by: 0 ... 1)
-                    }
-                }))
+                            if self.layoutDirection == .leftToRight {
+                                state = (value.location.x / proxy.size.width)
+                                    .bound(by: 0 ... 1)
+                            } else {
+                                state = ((-value.location.x + self.values.elementWidth(in: proxy.size.width)) / proxy.size.width)
+                                    .bound(by: 0 ... 1)
+                            }
+                        }))
     }
 
     private var thumbText: some View {
@@ -209,7 +209,7 @@ struct StepSlider_Previews: PreviewProvider {
                 }
             }
             .transition(AnyTransition.opacity.animation(Animation.default)
-                .combined(with: .move(edge: .bottom)))
+                            .combined(with: .move(edge: .bottom)))
             .animation(.spring())
         }
     }

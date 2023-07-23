@@ -30,7 +30,7 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
             .accessibilityElement(children: .ignore)
             .accessibility(value: self.accessibilityLabels(selected))
             .accessibility(hint: self.values.map(self.accessibilityLabels)
-                .reduce(Text("")) { $0 + Text(", ") + $1 })
+                            .reduce(Text("")) { $0 + Text(", ") + $1 })
             .accessibilityAdjustableAction { direction in
                 let (left, right) = self.valueIndices(for: selected, values: values)
                 switch direction {
