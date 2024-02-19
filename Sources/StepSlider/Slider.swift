@@ -61,6 +61,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     @Environment(\.trackBackground) var trackBackground
     @Environment(\.trackHighlight) var trackHighlight
+    @Environment(\.trackSelection) var trackSelectionColor
+    
     @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
     @Environment(\.layoutDirection) var layoutDirection
 
@@ -123,7 +125,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         Rectangle()
             .foregroundColor(.clear)
             .overlay(self.thumbText)
-            .background(Color.accentColor
+            .background(trackSelectionColor
                             .cornerRadius(10)
                             .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0))
             .shadow(color: Color.black.opacity(0.12), radius: 4)

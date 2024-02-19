@@ -59,3 +59,35 @@ public extension View {
         }
     }
 }
+
+// MARK: - Track Selection Background
+
+struct TrackSelectionKey: EnvironmentKey {
+    static var defaultValue = AnyView(Color.accentColor)
+}
+
+public extension EnvironmentValues {
+    var trackSelection: AnyView {
+        get { self[TrackSelectionKey.self] }
+        set { self[TrackSelectionKey.self] = newValue }
+    }
+}
+
+struct TrackSelectionModifier<Hightlight: View>: ViewModifier {
+    let highlight: Hightlight
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.trackSelection, AnyView(self.highlight))
+    }
+}
+
+public extension View {
+    @ViewBuilder func trackSelection<Content: View>(_ content: Content?) -> some View {
+        if let content = content {
+            self.modifier(TrackSelectionModifier(highlight: content))
+        } else {
+            self.modifier(TrackSelectionModifier(highlight: EmptyView()))
+        }
+    }
+}
