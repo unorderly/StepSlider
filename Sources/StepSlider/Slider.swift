@@ -16,11 +16,14 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     @ScaledMetric(relativeTo: .callout) var size: CGFloat = 44
     #endif
 
+    @Environment(\.sliderHaptics) var haptics
+
     var body: some View {
         HStack {
             ForEach(values, id: \.self) { value in
                 Button(action: {
                     self.selected = value
+                    self.haptics.playUpdate()
                 }) {
                     HStack {
                         Spacer(minLength: 0)
@@ -42,11 +45,6 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     }
 }
 
-#if canImport(UIKit)
-private var selectionFeedback = UISelectionFeedbackGenerator()
-private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-#endif
-
 struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     public let values: [Value]
 
@@ -62,7 +60,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     @Environment(\.trackBackground) var trackBackground
     @Environment(\.trackHighlight) var trackHighlight
     @Environment(\.trackSelection) var trackSelectionColor
-    
+    @Environment(\.sliderHaptics) var haptics
+
     @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
     @Environment(\.layoutDirection) var layoutDirection
 
@@ -132,15 +131,11 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
-            .onChange(of: self.selected, perform: { _ in
-                #if canImport(UIKit)
-                selectionFeedback.selectionChanged()
-                #endif
-            })
             .onChange(of: self.dragState, perform: { [dragState] state in
                 if let progress = state ?? dragState {
                     let selected = self.values.element(forProgress: progress)
                     if self.selected != selected {
+                        self.haptics.playUpdate()
                         self.selected = selected
                     }
                     let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
@@ -149,7 +144,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     if let previous = dragState,
                        (progress >= endProgress && previous < endProgress)
                         || (progress <= startProgress && previous > startProgress) {
-                        impactFeedback.impactOccurred()
+                        self.haptics.playEdge()
                     }
                     #endif
                 }

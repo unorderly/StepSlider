@@ -91,3 +91,40 @@ public extension View {
         }
     }
 }
+
+// MARK: - Haptic
+
+public protocol SliderHaptics {
+    func playUpdate()
+    func playEdge()
+}
+
+struct UIKitHapticAction: SliderHaptics {
+#if canImport(UIKit)
+private var selectionFeedback = UISelectionFeedbackGenerator()
+private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+#endif
+
+    func playEdge() {
+#if canImport(UIKit)
+        impactFeedback.impactOccurred()
+#endif
+    }
+
+    func playUpdate() {
+#if canImport(UIKit)
+        selectionFeedback.selectionChanged()
+#endif
+    }
+}
+
+struct SliderHapticsKey: EnvironmentKey {
+    static var defaultValue: SliderHaptics = UIKitHapticAction()
+}
+
+public extension EnvironmentValues {
+    var sliderHaptics: SliderHaptics {
+        get { self[SliderHapticsKey.self] }
+        set { self[SliderHapticsKey.self] = newValue }
+    }
+}
