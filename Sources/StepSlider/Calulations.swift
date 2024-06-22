@@ -29,7 +29,7 @@ extension Array {
 
     func thumbOffset(for progress: CGFloat, in width: CGFloat) -> CGFloat {
         (width * progress - self.elementWidth(in: width) / 2)
-            .bound(by: 0 ..< (width - self.elementWidth(in: width)))
+            .bound(by: 0..<(width - self.elementWidth(in: width)))
     }
 }
 

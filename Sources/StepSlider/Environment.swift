@@ -6,8 +6,8 @@ struct TrackBackgroundKey: EnvironmentKey {
     static var defaultValue = AnyView(Color.trackBackground)
 }
 
-public extension EnvironmentValues {
-    var trackBackground: AnyView {
+extension EnvironmentValues {
+    public var trackBackground: AnyView {
         get { self[TrackBackgroundKey.self] }
         set { self[TrackBackgroundKey.self] = newValue }
     }
@@ -22,8 +22,8 @@ struct TrackBackgroundModifier<Background: View>: ViewModifier {
     }
 }
 
-public extension View {
-    func trackBackground<Content: View>(_ content: Content) -> some View {
+extension View {
+    public func trackBackground<Content: View>(_ content: Content) -> some View {
         self.modifier(TrackBackgroundModifier(background: content))
     }
 }
@@ -34,8 +34,8 @@ struct TrackHighlightKey: EnvironmentKey {
     static var defaultValue = AnyView(EmptyView())
 }
 
-public extension EnvironmentValues {
-    var trackHighlight: AnyView {
+extension EnvironmentValues {
+    public var trackHighlight: AnyView {
         get { self[TrackHighlightKey.self] }
         set { self[TrackHighlightKey.self] = newValue }
     }
@@ -50,8 +50,9 @@ struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
     }
 }
 
-public extension View {
-    @ViewBuilder func trackHighlight<Content: View>(_ content: Content?) -> some View {
+extension View {
+    @ViewBuilder
+    public func trackHighlight<Content: View>(_ content: Content?) -> some View {
         if let content = content {
             self.modifier(TrackHighlightModifier(highlight: content))
         } else {
@@ -66,8 +67,8 @@ struct TrackSelectionKey: EnvironmentKey {
     static var defaultValue = AnyView(Color.accentColor)
 }
 
-public extension EnvironmentValues {
-    var trackSelection: AnyView {
+extension EnvironmentValues {
+    public var trackSelection: AnyView {
         get { self[TrackSelectionKey.self] }
         set { self[TrackSelectionKey.self] = newValue }
     }
@@ -82,8 +83,9 @@ struct TrackSelectionModifier<Hightlight: View>: ViewModifier {
     }
 }
 
-public extension View {
-    @ViewBuilder func trackSelection<Content: View>(_ content: Content?) -> some View {
+extension View {
+    @ViewBuilder
+    public func trackSelection<Content: View>(_ content: Content?) -> some View {
         if let content = content {
             self.modifier(TrackSelectionModifier(highlight: content))
         } else {
@@ -101,19 +103,19 @@ public protocol SliderHaptics {
 
 struct UIKitHapticAction: SliderHaptics {
 #if canImport(UIKit)
-private var selectionFeedback = UISelectionFeedbackGenerator()
-private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+    private var selectionFeedback = UISelectionFeedbackGenerator()
+    private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
 #endif
 
     func playEdge() {
 #if canImport(UIKit)
-        impactFeedback.impactOccurred()
+        self.impactFeedback.impactOccurred()
 #endif
     }
 
     func playUpdate() {
 #if canImport(UIKit)
-        selectionFeedback.selectionChanged()
+        self.selectionFeedback.selectionChanged()
 #endif
     }
 }
@@ -122,8 +124,8 @@ struct SliderHapticsKey: EnvironmentKey {
     static var defaultValue: SliderHaptics = UIKitHapticAction()
 }
 
-public extension EnvironmentValues {
-    var sliderHaptics: SliderHaptics {
+extension EnvironmentValues {
+    public var sliderHaptics: SliderHaptics {
         get { self[SliderHapticsKey.self] }
         set { self[SliderHapticsKey.self] = newValue }
     }

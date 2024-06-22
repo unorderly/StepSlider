@@ -22,17 +22,17 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 
     public var body: some View {
-        Slider(selected: $selected,
-               values: values,
-               trackLabels: trackLabels,
-               thumbLabels: thumbLabels,
+        Slider(selected: self.$selected,
+               values: self.values,
+               trackLabels: self.trackLabels,
+               thumbLabels: self.thumbLabels,
                valueIndices: self.valueIndices)
             .accessibilityElement(children: .ignore)
-            .accessibility(value: self.accessibilityLabels(selected))
+            .accessibility(value: self.accessibilityLabels(self.selected))
             .accessibility(hint: self.values.map(self.accessibilityLabels)
-                            .reduce(Text("")) { $0 + Text(", ") + $1 })
+                .reduce(Text("")) { $0 + Text(", ") + $1 })
             .accessibilityAdjustableAction { direction in
-                let (left, right) = self.valueIndices(for: selected, values: values)
+                let (left, right) = self.valueIndices(for: self.selected, values: self.values)
                 switch direction {
                 case .increment:
                     let next = left == right ? right + 1 : right
@@ -67,11 +67,11 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 }
 
-public extension StepSlider where ThumbLabel == Text {
-    init(selected: Binding<Value>,
-         values: [Value],
-         trackLabels: @escaping (Value) -> TrackLabel,
-         thumbLabels: @escaping (Value) -> ThumbLabel) {
+extension StepSlider where ThumbLabel == Text {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                trackLabels: @escaping (Value) -> TrackLabel,
+                thumbLabels: @escaping (Value) -> ThumbLabel) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: trackLabels,
@@ -80,9 +80,9 @@ public extension StepSlider where ThumbLabel == Text {
     }
 }
 
-public extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    init(selected: Binding<Value>,
-         values: [Value]) {
+extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    public init(selected: Binding<Value>,
+                values: [Value]) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: { Text($0.description) },
@@ -90,11 +90,11 @@ public extension StepSlider where Value: CustomStringConvertible, TrackLabel == 
     }
 }
 
-public extension StepSlider where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
-    init(selected: Binding<Value>,
-         values: [Value],
-         label: @escaping (Value) -> TrackLabel,
-         accessibilityLabels: @escaping (Value) -> Text) {
+extension StepSlider where Value: CustomStringConvertible, TrackLabel == ThumbLabel {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                label: @escaping (Value) -> TrackLabel,
+                accessibilityLabels: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,
@@ -103,10 +103,10 @@ public extension StepSlider where Value: CustomStringConvertible, TrackLabel == 
     }
 }
 
-public extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    init(selected: Binding<Value>,
-         values: [Value],
-         label: @escaping (Value) -> Text) {
+extension StepSlider where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                label: @escaping (Value) -> Text) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: label,

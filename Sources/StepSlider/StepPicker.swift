@@ -19,10 +19,10 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 
     public var body: some View {
-        Slider(selected: $selected,
-               values: values,
-               trackLabels: trackLabels,
-               thumbLabels: thumbLabels,
+        Slider(selected: self.$selected,
+               values: self.values,
+               trackLabels: self.trackLabels,
+               thumbLabels: self.thumbLabels,
                valueIndices: self.valueIndices)
             .accessibilityElement(children: .contain)
     }
@@ -36,9 +36,9 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     }
 }
 
-public extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
-    init(selected: Binding<Value>,
-         values: [Value]) {
+extension StepPicker where Value: CustomStringConvertible, TrackLabel == Text, ThumbLabel == Text {
+    public init(selected: Binding<Value>,
+                values: [Value]) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: { Text($0.description) },
@@ -46,10 +46,10 @@ public extension StepPicker where Value: CustomStringConvertible, TrackLabel == 
     }
 }
 
-public extension StepPicker where TrackLabel == ThumbLabel {
-    init(selected: Binding<Value>,
-         values: [Value],
-         labels: @escaping (Value) -> TrackLabel) {
+extension StepPicker where TrackLabel == ThumbLabel {
+    public init(selected: Binding<Value>,
+                values: [Value],
+                labels: @escaping (Value) -> TrackLabel) {
         self.init(selected: selected,
                   values: values,
                   trackLabels: labels,

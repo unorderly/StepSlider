@@ -10,17 +10,19 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
 
     let trackLabels: (Value) -> TrackLabel
 
-    #if targetEnvironment(macCatalyst)
-    @ScaledMetric(relativeTo: .callout) var size: CGFloat = 38
-    #else
-    @ScaledMetric(relativeTo: .callout) var size: CGFloat = 44
-    #endif
+#if targetEnvironment(macCatalyst)
+    @ScaledMetric(relativeTo: .callout)
+    var size: CGFloat = 38
+#else
+    @ScaledMetric(relativeTo: .callout)
+    var size: CGFloat = 44
+#endif
 
     @Environment(\.sliderHaptics) var haptics
 
     var body: some View {
         HStack {
-            ForEach(values, id: \.self) { value in
+            ForEach(self.values, id: \.self) { value in
                 Button(action: {
                     self.selected = value
                     self.haptics.playUpdate()
@@ -35,11 +37,11 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                             .padding(4)
                         Spacer(minLength: 0)
                     }
-                    .frame(minHeight: size)
+                    .frame(minHeight: self.size)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibility(addTraits: value == selected ? .isSelected : [])
+                .accessibility(addTraits: value == self.selected ? .isSelected : [])
             }
         }
     }
@@ -78,12 +80,12 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     }
 
     public var body: some View {
-        SliderTrack(selected: $selected, values: values, trackLabels: trackLabels)
+        SliderTrack(selected: self.$selected, values: self.values, trackLabels: self.trackLabels)
             .equatable()
-            .overlay(overlay)
-            .background(highlightTrack)
+            .overlay(self.overlay)
+            .background(self.highlightTrack)
             .padding(6)
-            .background(trackBackground.cornerRadius(10))
+            .background(self.trackBackground.cornerRadius(10))
     }
 
     private var animation: Animation? {
@@ -92,7 +94,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private var overlay: some View {
         GeometryReader { proxy in
-            thumb(in: proxy)
+            self.thumb(in: proxy)
         }
         .accessibility(hidden: true)
     }
@@ -110,13 +112,13 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private var highlightTrack: some View {
         GeometryReader { proxy in
-            trackHighlight
+            self.trackHighlight
                 .cornerRadius(10)
-                .padding(dragState != nil && !accessibilityReduceMotion ? -6 : 0)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0)
                 .frame(width: self.values
-                        .thumbOffset(for: dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
-                        .elementWidth(in: proxy.size.width))
-                .animation(self.animation, value: dragState != nil ? 0 : selected.hashValue)
+                    .thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
+                    .elementWidth(in: proxy.size.width))
+                .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
         }
     }
 
@@ -124,9 +126,9 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         Rectangle()
             .foregroundColor(.clear)
             .overlay(self.thumbText)
-            .background(trackSelectionColor
-                            .cornerRadius(10)
-                            .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0))
+            .background(self.trackSelectionColor
+                .cornerRadius(10)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -6 : 0))
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
@@ -138,32 +140,32 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                         self.haptics.playUpdate()
                         self.selected = selected
                     }
-                    let endProgress = values.progress(for: values.count - 1, in: proxy.size.width)
-                    let startProgress = values.progress(for: 0, in: proxy.size.width)
-                    #if canImport(UIKit)
+                    let endProgress = self.values.progress(for: self.values.count - 1, in: proxy.size.width)
+                    let startProgress = self.values.progress(for: 0, in: proxy.size.width)
+#if canImport(UIKit)
                     if let previous = dragState,
                        (progress >= endProgress && previous < endProgress)
-                        || (progress <= startProgress && previous > startProgress) {
+                       || (progress <= startProgress && previous > startProgress) {
                         self.haptics.playEdge()
                     }
-                    #endif
+#endif
                 }
             })
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                        .updating($dragState, body: { value, state, _ in
+                .updating(self.$dragState, body: { value, state, _ in
 
-                            if self.layoutDirection == .leftToRight {
-                                state = (value.location.x / proxy.size.width)
-                                    .bound(by: 0 ... 1)
-                            } else {
-                                state = ((-value.location.x + self.values.elementWidth(in: proxy.size.width)) / proxy.size.width)
-                                    .bound(by: 0 ... 1)
-                            }
-                        }))
+                    if self.layoutDirection == .leftToRight {
+                        state = (value.location.x / proxy.size.width)
+                            .bound(by: 0...1)
+                    } else {
+                        state = ((-value.location.x + self.values.elementWidth(in: proxy.size.width)) / proxy.size.width)
+                            .bound(by: 0...1)
+                    }
+                }))
     }
 
     private var thumbText: some View {
-        self.thumbLabels(selected)
+        self.thumbLabels(self.selected)
             .lineLimit(1)
             .allowsTightening(true)
             .minimumScaleFactor(0.1)
@@ -187,16 +189,16 @@ struct StepSlider_Previews: PreviewProvider {
 
         var body: some View {
             ScrollView {
-                Text("\(value) min")
+                Text("\(self.value) min")
                     .font(.title)
-                StepSlider(selected: $value,
+                StepSlider(selected: self.$value,
                            values: [1, 15, 30, 45, 60, 90],
                            trackLabels: { Text("\($0)") },
                            thumbLabels: { Text("\($0) min") })
                     .trackHighlight(Color.blue)
                     .padding(20)
 
-                StepPicker(selected: $type,
+                StepPicker(selected: self.$type,
                            values: ValueType.allCases)
                     .padding(20)
                 Button(action: {
@@ -206,7 +208,7 @@ struct StepSlider_Previews: PreviewProvider {
                 }
             }
             .transition(AnyTransition.opacity.animation(Animation.default)
-                            .combined(with: .move(edge: .bottom)))
+                .combined(with: .move(edge: .bottom)))
             .animation(.spring())
         }
     }
