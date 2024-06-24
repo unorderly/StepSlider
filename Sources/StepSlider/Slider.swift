@@ -18,7 +18,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
     var size: CGFloat = 44
 #endif
 
-    @Environment(\.sliderHaptics) var haptics
+    @Environment(\.sliderHaptics) private var haptics
 
     var body: some View {
         HStack {
@@ -59,13 +59,13 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     @GestureState private var dragState: CGFloat? = nil
 
-    @Environment(\.trackBackground) var trackBackground
-    @Environment(\.trackHighlight) var trackHighlight
-    @Environment(\.trackSelection) var trackSelectionColor
-    @Environment(\.sliderHaptics) var haptics
+    @Environment(\.trackBackground) private var trackBackground
+    @Environment(\.trackHighlight) private var trackHighlight
+    @Environment(\.trackSelection) private var trackSelectionColor
+    @Environment(\.sliderHaptics) private var haptics
 
-    @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
-    @Environment(\.layoutDirection) var layoutDirection
+    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+    @Environment(\.layoutDirection) private var layoutDirection
 
     init(selected: Binding<Value>,
          values: [Value],
