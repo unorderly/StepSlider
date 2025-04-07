@@ -2,15 +2,9 @@ import SwiftUI
 
 // MARK: - Track Background
 
-struct TrackBackgroundKey: EnvironmentKey {
-    static var defaultValue = AnyView(Color.trackBackground)
-}
 
 extension EnvironmentValues {
-    public var trackBackground: AnyView {
-        get { self[TrackBackgroundKey.self] }
-        set { self[TrackBackgroundKey.self] = newValue }
-    }
+    @Entry public var trackBackground: AnyView = AnyView(Color.trackBackground)
 }
 
 struct TrackBackgroundModifier<Background: View>: ViewModifier {
@@ -30,15 +24,8 @@ extension View {
 
 // MARK: - Track Highlight
 
-struct TrackHighlightKey: EnvironmentKey {
-    static var defaultValue = AnyView(EmptyView())
-}
-
 extension EnvironmentValues {
-    public var trackHighlight: AnyView {
-        get { self[TrackHighlightKey.self] }
-        set { self[TrackHighlightKey.self] = newValue }
-    }
+    @Entry public var trackHighlight: AnyView = AnyView(EmptyView())
 }
 
 struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
@@ -63,15 +50,8 @@ extension View {
 
 // MARK: - Track Selection Background
 
-struct TrackSelectionKey: EnvironmentKey {
-    static var defaultValue = AnyView(Color.accentColor)
-}
-
 extension EnvironmentValues {
-    public var trackSelection: AnyView {
-        get { self[TrackSelectionKey.self] }
-        set { self[TrackSelectionKey.self] = newValue }
-    }
+    @Entry public var trackSelection: AnyView = AnyView(Color.accentColor)
 }
 
 struct TrackSelectionModifier<Hightlight: View>: ViewModifier {
@@ -97,22 +77,23 @@ extension View {
 // MARK: - Haptic
 
 public protocol SliderHaptics {
-    func playUpdate()
-    func playEdge()
+    @MainActor func playUpdate()
+    @MainActor func playEdge()
 }
 
 struct UIKitHapticAction: SliderHaptics {
 #if canImport(UIKit)
-    private var selectionFeedback = UISelectionFeedbackGenerator()
-    private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+    @MainActor private var selectionFeedback = UISelectionFeedbackGenerator()
+    @MainActor private var impactFeedback = UIImpactFeedbackGenerator(style: .medium)
 #endif
-
+    @MainActor
     func playEdge() {
 #if canImport(UIKit)
         self.impactFeedback.impactOccurred()
 #endif
     }
 
+    @MainActor
     func playUpdate() {
 #if canImport(UIKit)
         self.selectionFeedback.selectionChanged()
@@ -120,13 +101,6 @@ struct UIKitHapticAction: SliderHaptics {
     }
 }
 
-struct SliderHapticsKey: EnvironmentKey {
-    static var defaultValue: SliderHaptics = UIKitHapticAction()
-}
-
 extension EnvironmentValues {
-    public var sliderHaptics: SliderHaptics {
-        get { self[SliderHapticsKey.self] }
-        set { self[SliderHapticsKey.self] = newValue }
-    }
+    @Entry public var sliderHaptics: SliderHaptics = UIKitHapticAction()
 }
