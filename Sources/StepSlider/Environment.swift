@@ -2,9 +2,8 @@ import SwiftUI
 
 // MARK: - Track Background
 
-
 extension EnvironmentValues {
-    @Entry public var trackBackground: AnyView = AnyView(Color.trackBackground)
+    @Entry public var trackBackground: AnyView = .init(Color.trackBackground)
 }
 
 struct TrackBackgroundModifier<Background: View>: ViewModifier {
@@ -25,7 +24,7 @@ extension View {
 // MARK: - Track Highlight
 
 extension EnvironmentValues {
-    @Entry public var trackHighlight: AnyView = AnyView(EmptyView())
+    @Entry public var trackHighlight: AnyView = .init(EmptyView())
 }
 
 struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
@@ -51,7 +50,7 @@ extension View {
 // MARK: - Track Selection Background
 
 extension EnvironmentValues {
-    @Entry public var trackSelection: AnyView = AnyView(Color.accentColor)
+    @Entry public var trackSelection: AnyView = .init(Color.accentColor)
 }
 
 struct TrackSelectionModifier<Hightlight: View>: ViewModifier {
@@ -77,8 +76,10 @@ extension View {
 // MARK: - Haptic
 
 public protocol SliderHaptics {
-    @MainActor func playUpdate()
-    @MainActor func playEdge()
+    @MainActor
+    func playUpdate()
+    @MainActor
+    func playEdge()
 }
 
 struct UIKitHapticAction: SliderHaptics {
