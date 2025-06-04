@@ -210,7 +210,7 @@ struct StepSlider_Previews: PreviewProvider {
             }
             .transition(AnyTransition.opacity.animation(Animation.default)
                 .combined(with: .move(edge: .bottom)))
-            .animation(.spring())
+            .animation(.spring(), value: value)
         }
     }
 
