@@ -11,6 +11,7 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     private let cornerRadius: CGFloat
     private let padding: CGFloat
     private let roundTrackBackground: Bool
+    private let updateOnDragEnd: Bool
 
     public init(selected: Binding<Value>,
                 values: [Value],
@@ -18,7 +19,8 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
                 thumbLabels: @escaping (Value) -> ThumbLabel,
                 cornerRadius: CGFloat = 10,
                 padding: CGFloat = 6,
-                roundTrackBackground: Bool = true) {
+                roundTrackBackground: Bool = true,
+                updateOnDragEnd: Bool = false) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
@@ -26,6 +28,7 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
         self.cornerRadius = cornerRadius
         self.padding = padding
         self.roundTrackBackground = roundTrackBackground
+        self.updateOnDragEnd = updateOnDragEnd
     }
 
     public var body: some View {
@@ -36,7 +39,8 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
                valueIndices: self.valueIndices,
                cornerRadius: self.cornerRadius,
                padding: self.padding,
-               roundTrackBackground: self.roundTrackBackground)
+               roundTrackBackground: self.roundTrackBackground,
+               updateOnDragEnd: updateOnDragEnd)
             .accessibilityElement(children: .contain)
     }
 
