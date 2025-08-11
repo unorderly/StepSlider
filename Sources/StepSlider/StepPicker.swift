@@ -40,7 +40,7 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
                cornerRadius: self.cornerRadius,
                padding: self.padding,
                roundTrackBackground: self.roundTrackBackground,
-               updateOnDragEnd: updateOnDragEnd)
+               updateOnDragEnd: self.updateOnDragEnd)
             .accessibilityElement(children: .contain)
     }
 
