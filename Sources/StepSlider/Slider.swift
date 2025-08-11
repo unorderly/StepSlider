@@ -159,7 +159,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
-            .onChange(of: self.dragState, perform: { [dragState] state in
+            .onChange(of: self.dragState, perform: { dragState, state in
                 if let progress = state ?? dragState {
                     let selected = self.values.element(forProgress: progress)
                     if updateOnDragEnd {
