@@ -31,7 +31,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                         Spacer(minLength: 0)
                         self.trackLabels(value)
                             .font(.callout)
-                            .foregroundColor(.trackLabel)
+                            .foregroundStyle(Color.trackLabel)
                             .minimumScaleFactor(0.1)
                             .lineLimit(1)
                             .padding(4)
@@ -148,7 +148,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private func thumb(in proxy: GeometryProxy) -> some View {
         Rectangle()
-            .foregroundColor(.clear)
+            .foregroundStyle(Color.clear)
             .overlay(self.thumbText)
             .background(self.trackSelectionColor
                 .cornerRadius(self.cornerRadius)
@@ -216,7 +216,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .allowsTightening(true)
             .minimumScaleFactor(0.1)
             .font(.headline)
-            .foregroundColor(.primary)
+            .foregroundStyle(Color.primary)
             .padding(.horizontal, 4)
     }
 }

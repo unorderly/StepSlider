@@ -35,14 +35,14 @@ struct ContentView: View {
                                Group {
                                    if step < self.value {
                                        Text("\(step)")
-                                           .foregroundColor(.secondary)
+                                           .foregroundStyle(Color.secondary)
                                    } else {
                                        Text("\(step)")
                                    }
                                }
                            },
                            thumbLabels: {
-                               Text("\($0) min").foregroundColor(.white)
+                                Text("\($0) min").foregroundStyle(Color.white)
                            })
                            //                        .trackHighlight(Color("accent").opacity(0.2))
                            .accessibilityLabel(Text("Duration"))
@@ -57,14 +57,14 @@ struct ContentView: View {
                                Group {
                                    if step < self.value {
                                        Text("\(step)")
-                                           .foregroundColor(.secondary)
+                                           .foregroundStyle(Color.secondary)
                                    } else {
                                        Text("\(step)")
                                    }
                                }
                            },
                            thumbLabels: {
-                               Text("\($0) min").foregroundColor(.white)
+                               Text("\($0) min").foregroundStyle(Color.white)
                            })
                            //                        .trackHighlight(Color("accent").opacity(0.2))
                            .accessibilityLabel(Text("Duration"))
@@ -79,7 +79,7 @@ struct ContentView: View {
                 //                           values: ValueType.allCases,
                 //                           trackLabels: { Text($0.description) },
                 //                           thumbLabels: {
-                //                               Text($0.description).foregroundColor(.white)
+                //                               Text($0.description).foregroundStyle(Color.white)
                 //                           })
                 //                    .accessibilityLabel(Text("Value Types"))
             }
