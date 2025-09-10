@@ -57,15 +57,11 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private let valueIndices: (Value, [Value]) -> (Int, Int)
 
-    private let cornerRadius: CGFloat
-    private let padding: CGFloat
-    private let roundTrackBackground: Bool
     private let updateOnDragEnd: Bool
 
     @GestureState private var dragState: CGFloat? = nil
     @State private var shadowValue: Value?
 
-    @Environment(\.trackBackground) private var trackBackground
     @Environment(\.trackHighlight) private var trackHighlight
     @Environment(\.trackSelection) private var trackSelectionColor
     @Environment(\.sliderHaptics) private var haptics
@@ -78,18 +74,12 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
          trackLabels: @escaping (Value) -> TrackLabel,
          thumbLabels: @escaping (Value) -> ThumbLabel,
          valueIndices: @escaping (Value, [Value]) -> (Int, Int),
-         cornerRadius: CGFloat = 10,
-         padding: CGFloat = 6,
-         roundTrackBackground: Bool = true,
          updateOnDragEnd: Bool = false) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
         self.valueIndices = valueIndices
-        self.cornerRadius = cornerRadius
-        self.padding = padding
-        self.roundTrackBackground = roundTrackBackground
         self.updateOnDragEnd = updateOnDragEnd
     }
 
@@ -98,14 +88,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .equatable()
             .overlay(self.overlay)
             .background(self.highlightTrack)
-            .padding(self.padding)
-            .background {
-                if self.roundTrackBackground {
-                    self.trackBackground.cornerRadius(self.cornerRadius)
-                } else {
-                    self.trackBackground
-                }
-            }
+            .padding(4)
     }
 
     private var animation: Animation? {
@@ -137,8 +120,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     private var highlightTrack: some View {
         GeometryReader { proxy in
             self.trackHighlight
-                .cornerRadius(self.cornerRadius)
-                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -self.padding : 0)
+                .clipShape(.capsule)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0)
                 .frame(width: self.values
                     .thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
                     .elementWidth(in: proxy.size.width))
@@ -151,8 +134,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .foregroundStyle(Color.clear)
             .overlay(self.thumbText)
             .background(self.trackSelectionColor
-                .cornerRadius(self.cornerRadius)
-                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -self.padding : 0))
+                .clipShape(.capsule)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0))
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .hoverEffect(.highlight)
             .frame(width: self.values.elementWidth(in: proxy.size.width))

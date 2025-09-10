@@ -1,25 +1,5 @@
 import SwiftUI
 
-// MARK: - Track Background
-
-extension EnvironmentValues {
-    @Entry public var trackBackground: AnyView = .init(Color.trackBackground)
-}
-
-struct TrackBackgroundModifier<Background: View>: ViewModifier {
-    let background: Background
-
-    func body(content: Content) -> some View {
-        content
-            .environment(\.trackBackground, AnyView(self.background))
-    }
-}
-
-extension View {
-    public func trackBackground<Content: View>(_ content: Content) -> some View {
-        self.modifier(TrackBackgroundModifier(background: content))
-    }
-}
 
 // MARK: - Track Highlight
 
