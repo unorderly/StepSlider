@@ -136,6 +136,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .background(self.trackSelectionColor
                 .clipShape(.capsule)
                 .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0))
+            .contentShape(.hoverEffect, .capsule)
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .hoverEffect(.highlight)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
