@@ -31,7 +31,7 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
                         Spacer(minLength: 0)
                         self.trackLabels(value)
                             .font(.callout)
-                            .foregroundColor(.trackLabel)
+                            .foregroundStyle(Color.trackLabel)
                             .minimumScaleFactor(0.1)
                             .lineLimit(1)
                             .padding(4)
@@ -57,15 +57,11 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private let valueIndices: (Value, [Value]) -> (Int, Int)
 
-    private let cornerRadius: CGFloat
-    private let padding: CGFloat
-    private let roundTrackBackground: Bool
     private let updateOnDragEnd: Bool
 
     @GestureState private var dragState: CGFloat? = nil
     @State private var shadowValue: Value?
 
-    @Environment(\.trackBackground) private var trackBackground
     @Environment(\.trackHighlight) private var trackHighlight
     @Environment(\.trackSelection) private var trackSelectionColor
     @Environment(\.sliderHaptics) private var haptics
@@ -78,19 +74,12 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
          trackLabels: @escaping (Value) -> TrackLabel,
          thumbLabels: @escaping (Value) -> ThumbLabel,
          valueIndices: @escaping (Value, [Value]) -> (Int, Int),
-         cornerRadius: CGFloat = 10,
-         padding: CGFloat = 6,
-         roundTrackBackground: Bool = true,
-         updateOnDragEnd: Bool = false
-    ) {
+         updateOnDragEnd: Bool = false) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
         self.valueIndices = valueIndices
-        self.cornerRadius = cornerRadius
-        self.padding = padding
-        self.roundTrackBackground = roundTrackBackground
         self.updateOnDragEnd = updateOnDragEnd
     }
 
@@ -99,14 +88,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .equatable()
             .overlay(self.overlay)
             .background(self.highlightTrack)
-            .padding(padding)
-            .background {
-                if roundTrackBackground {
-                    self.trackBackground.cornerRadius(cornerRadius)
-                } else {
-                    self.trackBackground
-                }
-            }
+            .padding(4)
     }
 
     private var animation: Animation? {
@@ -121,9 +103,9 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     }
 
     private var displayValue: Value {
-        shadowValue ?? selected
+        self.shadowValue ?? self.selected
     }
-    
+
     private func dragProgress(in width: CGFloat) -> CGFloat {
         if let progress = self.dragState {
             return progress
@@ -138,8 +120,8 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
     private var highlightTrack: some View {
         GeometryReader { proxy in
             self.trackHighlight
-                .cornerRadius(cornerRadius)
-                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -padding : 0)
+                .clipShape(.capsule)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0)
                 .frame(width: self.values
                     .thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width) + self.values
                     .elementWidth(in: proxy.size.width))
@@ -149,26 +131,27 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private func thumb(in proxy: GeometryProxy) -> some View {
         Rectangle()
-            .foregroundColor(.clear)
+            .foregroundStyle(Color.clear)
             .overlay(self.thumbText)
             .background(self.trackSelectionColor
-                .cornerRadius(cornerRadius)
-                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -padding : 0))
+                .clipShape(.capsule)
+                .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0))
+            .contentShape(.hoverEffect, .capsule)
             .shadow(color: Color.black.opacity(0.12), radius: 4)
             .hoverEffect(.highlight)
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
-            .onChange(of: self.dragState, perform: { [dragState] state in
+            .onChange(of: self.dragState) { dragState, state in
                 if let progress = state ?? dragState {
                     let selected = self.values.element(forProgress: progress)
-                    if updateOnDragEnd {
-                        if shadowValue == nil {
-                            shadowValue = self.selected
+                    if self.updateOnDragEnd {
+                        if self.shadowValue == nil {
+                            self.shadowValue = self.selected
                         }
-                        if shadowValue != selected {
+                        if self.shadowValue != selected {
                             self.haptics.playUpdate()
-                            shadowValue = selected
+                            self.shadowValue = selected
                         }
                     } else {
                         if self.selected != selected {
@@ -186,7 +169,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     }
 #endif
                 }
-            })
+            }
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                 .updating(self.$dragState, body: { value, state, _ in
 
@@ -199,14 +182,14 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
                     }
                 })
                 .onEnded { _ in
-                    if updateOnDragEnd, let finalValue = shadowValue {
-                        selected = finalValue
-                        shadowValue = nil
+                    if self.updateOnDragEnd, let finalValue = shadowValue {
+                        self.selected = finalValue
+                        self.shadowValue = nil
                     }
                 })
-            .onChange(of: selected) { _ in
-                if dragState == nil && shadowValue != nil {
-                    shadowValue = nil
+            .onChange(of: self.selected) {
+                if self.dragState == nil, self.shadowValue != nil {
+                    self.shadowValue = nil
                 }
             }
     }
@@ -217,7 +200,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .allowsTightening(true)
             .minimumScaleFactor(0.1)
             .font(.headline)
-            .foregroundColor(.primary)
+            .foregroundStyle(Color.primary)
             .padding(.horizontal, 4)
     }
 }
@@ -256,7 +239,7 @@ struct StepSlider_Previews: PreviewProvider {
             }
             .transition(AnyTransition.opacity.animation(Animation.default)
                 .combined(with: .move(edge: .bottom)))
-            .animation(.spring(), value: value)
+            .animation(.spring(), value: self.value)
         }
     }
 

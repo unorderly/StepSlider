@@ -9,9 +9,6 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
     private let thumbLabels: (Value) -> ThumbLabel
     private let accessibilityLabels: (Value) -> Text
 
-    private let cornerRadius: CGFloat
-    private let padding: CGFloat
-    private let roundTrackBackground: Bool
     private let updateOnDragEnd: Bool
 
     public init(selected: Binding<Value>,
@@ -19,18 +16,12 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
                 trackLabels: @escaping (Value) -> TrackLabel,
                 thumbLabels: @escaping (Value) -> ThumbLabel,
                 accessibilityLabels: @escaping (Value) -> Text,
-                cornerRadius: CGFloat = 10,
-                padding: CGFloat = 6,
-                roundTrackBackground: Bool = true,
                 updateOnDragEnd: Bool = false) {
         self._selected = selected
         self.values = values
         self.trackLabels = trackLabels
         self.thumbLabels = thumbLabels
         self.accessibilityLabels = accessibilityLabels
-        self.cornerRadius = cornerRadius
-        self.padding = padding
-        self.roundTrackBackground = roundTrackBackground
         self.updateOnDragEnd = updateOnDragEnd
     }
 
@@ -40,9 +31,6 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
                trackLabels: self.trackLabels,
                thumbLabels: self.thumbLabels,
                valueIndices: self.valueIndices,
-               cornerRadius: self.cornerRadius,
-               padding: self.padding,
-               roundTrackBackground: self.roundTrackBackground,
                updateOnDragEnd: self.updateOnDragEnd)
             .accessibilityElement(children: .ignore)
             .accessibility(value: self.accessibilityLabels(self.selected))
