@@ -59,7 +59,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
 
     private let updateOnDragEnd: Bool
 
-    @GestureState private var dragState: CGFloat? = nil
+    @GestureState private var dragState: CGFloat?
     @State private var shadowValue: Value?
 
     @Environment(\.trackHighlight) private var trackHighlight
