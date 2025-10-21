@@ -42,7 +42,7 @@ struct ContentView: View {
                                }
                            },
                            thumbLabels: {
-                                Text("\($0) min").foregroundStyle(Color.white)
+                               Text("\($0) min").foregroundStyle(Color.white)
                            })
                            //                        .trackHighlight(Color("accent").opacity(0.2))
                            .accessibilityLabel(Text("Duration"))

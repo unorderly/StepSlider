@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 // MARK: - Track Highlight
 
 extension EnvironmentValues {
