@@ -48,9 +48,9 @@ struct SliderTrack<Value: Hashable, TrackLabel: View>: View, Equatable {
 }
 
 struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
-    public let values: [Value]
+    let values: [Value]
 
-    @Binding public var selected: Value
+    @Binding var selected: Value
 
     private let trackLabels: (Value) -> TrackLabel
     private let thumbLabels: (Value) -> ThumbLabel
@@ -83,7 +83,7 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
         self.updateOnDragEnd = updateOnDragEnd
     }
 
-    public var body: some View {
+    var body: some View {
         SliderTrack(selected: self.$selected, values: self.values, trackLabels: self.trackLabels)
             .equatable()
             .overlay(self.overlay)
@@ -172,7 +172,6 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             }
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                 .updating(self.$dragState, body: { value, state, _ in
-
                     if self.layoutDirection == .leftToRight {
                         state = (value.location.x / proxy.size.width)
                             .bound(by: 0...1)

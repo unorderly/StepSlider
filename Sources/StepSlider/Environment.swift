@@ -17,8 +17,8 @@ struct TrackHighlightModifier<Hightlight: View>: ViewModifier {
 
 extension View {
     @ViewBuilder
-    public func trackHighlight<Content: View>(_ content: Content?) -> some View {
-        if let content = content {
+    public func trackHighlight(_ content: (some View)?) -> some View {
+        if let content {
             self.modifier(TrackHighlightModifier(highlight: content))
         } else {
             self.modifier(TrackHighlightModifier(highlight: EmptyView()))
@@ -43,8 +43,8 @@ struct TrackSelectionModifier<Hightlight: View>: ViewModifier {
 
 extension View {
     @ViewBuilder
-    public func trackSelection<Content: View>(_ content: Content?) -> some View {
-        if let content = content {
+    public func trackSelection(_ content: (some View)?) -> some View {
+        if let content {
             self.modifier(TrackSelectionModifier(highlight: content))
         } else {
             self.modifier(TrackSelectionModifier(highlight: EmptyView()))

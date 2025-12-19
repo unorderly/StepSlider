@@ -61,7 +61,7 @@ public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
         } else {
             let prev = values.lastIndex(where: { $0 < value })
             let next = values.firstIndex(where: { $0 > value })
-            if let prev = prev, let next = next {
+            if let prev, let next {
                 return (prev, next)
             } else if prev == nil {
                 return (0, 0)

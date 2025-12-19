@@ -34,9 +34,9 @@ public struct StepPicker<Value: Hashable, TrackLabel: View, ThumbLabel: View>: V
 
     func valueIndices(for value: Value, values: [Value]) -> (Int, Int) {
         if let index = values.firstIndex(of: value) {
-            return (index, index)
+            (index, index)
         } else {
-            return (0, 0)
+            (0, 0)
         }
     }
 }
