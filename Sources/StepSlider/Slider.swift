@@ -145,18 +145,20 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .onChange(of: self.dragState) { dragState, state in
                 if let progress = state ?? dragState {
                     let selected = self.values.element(forProgress: progress)
-                    if self.updateOnDragEnd {
-                        if self.shadowValue == nil {
-                            self.shadowValue = self.selected
-                        }
-                        if self.shadowValue != selected {
-                            self.haptics.playUpdate()
-                            self.shadowValue = selected
-                        }
-                    } else {
-                        if self.selected != selected {
-                            self.haptics.playUpdate()
-                            self.selected = selected
+                    if state != nil {
+                        if self.updateOnDragEnd {
+                            if self.shadowValue == nil {
+                                self.shadowValue = self.selected
+                            }
+                            if self.shadowValue != selected {
+                                self.haptics.playUpdate()
+                                self.shadowValue = selected
+                            }
+                        } else {
+                            if self.selected != selected {
+                                self.haptics.playUpdate()
+                                self.selected = selected
+                            }
                         }
                     }
                     let endProgress = self.values.progress(for: self.values.count - 1, in: proxy.size.width)
