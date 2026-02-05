@@ -136,9 +136,13 @@ struct Slider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View {
             .background(self.trackSelectionColor
                 .clipShape(.capsule)
                 .padding(self.dragState != nil && !self.accessibilityReduceMotion ? -4 : 0))
+            #if os(iOS)
             .contentShape(.hoverEffect, .capsule)
+            #endif
             .shadow(color: Color.black.opacity(0.12), radius: 4)
+            #if os(iOS)
             .hoverEffect(.highlight)
+            #endif
             .frame(width: self.values.elementWidth(in: proxy.size.width))
             .offset(x: self.values.thumbOffset(for: self.dragProgress(in: proxy.size.width), in: proxy.size.width))
             .animation(self.animation, value: self.dragState != nil ? 0 : self.selected.hashValue)
