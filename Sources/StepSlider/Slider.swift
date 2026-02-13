@@ -215,7 +215,9 @@ struct StepSlider_Previews: PreviewProvider {
         enum ValueType: String, CaseIterable, CustomStringConvertible {
             case one, two, three, four
 
-            var description: String { self.rawValue }
+            var description: String {
+                self.rawValue
+            }
         }
 
         var body: some View {

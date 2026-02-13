@@ -7,11 +7,15 @@ struct ContentView: View {
     @State private var type: ValueType = .one
 
     enum ValueType: String, CaseIterable, CustomStringConvertible, Identifiable {
-        var id: String { self.rawValue }
+        var id: String {
+            self.rawValue
+        }
 
         case one, two, three, four
 
-        var description: String { self.rawValue }
+        var description: String {
+            self.rawValue
+        }
     }
 
     var body: some View {

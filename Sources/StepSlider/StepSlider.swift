@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct StepSlider<Value: Hashable, TrackLabel: View, ThumbLabel: View>: View where Value: Comparable {
+public struct StepSlider<Value: Hashable & Comparable, TrackLabel: View, ThumbLabel: View>: View {
     public let values: [Value]
 
     @Binding public var selected: Value
